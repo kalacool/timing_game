@@ -40,8 +40,38 @@
         .subtitle {
             text-align: center;
             color: #666;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             font-size: 0.9em;
+        }
+
+        .mode-selector {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .mode-btn {
+            padding: 10px 20px;
+            font-size: 1em;
+            border: 2px solid #667eea;
+            background: white;
+            color: #667eea;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        .mode-btn:hover {
+            background: #f3f4f6;
+            transform: translateY(-2px);
+        }
+
+        .mode-btn.active {
+            background: #667eea;
+            color: white;
         }
 
         .timer-display {
@@ -283,13 +313,29 @@
             font-weight: bold;
             color: #667eea;
         }
+
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            color: #667eea;
+            font-size: 1em;
+            font-weight: bold;
+            border-top: 2px solid #e5e7eb;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>⏱️ 5.20 秒挑戰</h1>
-        <p class="subtitle">挑戰你的反應！讓計時器剛好停在 5.20 秒</p>
-        
+        <h1>⏱️ 計時挑戰遊戲</h1>
+        <p class="subtitle">挑戰你的反應！讓計時器剛好停在目標時間</p>
+
+        <div class="mode-selector">
+            <button class="mode-btn active" onclick="setMode(5.20)">5.20 秒</button>
+            <button class="mode-btn" onclick="setMode(13.14)">13.14 秒</button>
+            <button class="mode-btn" onclick="setMode(6.66)">6.66 秒</button>
+        </div>
+
         <div class="timer-display" id="timerDisplay">0.00</div>
 
         <div class="controls">
@@ -321,6 +367,10 @@
                 <div class="no-records">還沒有記錄，開始挑戰吧！</div>
             </div>
         </div>
+
+        <div class="footer">
+            棒槌老爹❤️婚禮小遊戲工作室
+        </div>
     </div>
 
     <script>
@@ -328,6 +378,24 @@
         let timerInterval = null;
         let isRunning = false;
         let records = [];
+        let targetTime = 5.20; // 預設目標時間
+
+        // 設定挑戰模式
+        function setMode(time) {
+            if (isRunning) return; // 遊戲進行中不能切換
+
+            targetTime = time;
+
+            // 更新按鈕狀態
+            document.querySelectorAll('.mode-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // 重置顯示
+            document.getElementById('timerDisplay').textContent = '0.00';
+            document.getElementById('timerDisplay').className = 'timer-display';
+        }
 
         // 載入記錄
         function loadRecords() {
@@ -374,7 +442,7 @@
 
             // 先計算最終時間（使用當前顯示的時間）
             const finalTime = parseFloat(((Date.now() - startTime) / 1000).toFixed(2));
-            const diff = finalTime - 5.20;
+            const diff = finalTime - targetTime;
 
             // 停止計時器
             clearInterval(timerInterval);
@@ -407,9 +475,10 @@
                 id: Date.now(),
                 time: time,
                 diff: diff,
+                target: targetTime,
                 timestamp: new Date().toLocaleString('zh-TW')
             };
-            
+
             records.unshift(record);
             saveRecords();
             renderRecords();
@@ -445,6 +514,8 @@
                     }
                 }
 
+                const targetDisplay = record.target ? ` (目標: ${record.target.toFixed(2)}s)` : '';
+
                 return `
                     <div class="record-item">
                         <span class="record-number">#${index + 1}</span>
@@ -453,7 +524,7 @@
                                 <span class="record-time">${record.time.toFixed(2)}s</span>
                                 <span class="record-diff ${diffClass}">${diffText}</span>
                             </div>
-                            <div class="record-timestamp">${record.timestamp}</div>
+                            <div class="record-timestamp">${record.timestamp}${targetDisplay}</div>
                         </div>
                         <button class="delete-btn" onclick="deleteRecord(${record.id})">刪除</button>
                     </div>
