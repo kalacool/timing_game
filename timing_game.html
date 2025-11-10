@@ -179,6 +179,7 @@
             gap: 15px;
             align-items: center;
             flex: 1;
+            flex-wrap: wrap;
         }
 
         .record-time {
@@ -193,6 +194,31 @@
             padding: 4px 10px;
             border-radius: 5px;
             font-weight: bold;
+        }
+
+        .record-timestamp {
+            color: #9ca3af;
+            font-size: 0.85em;
+        }
+
+        /* 手機版樣式 */
+        @media (max-width: 768px) {
+            .record-timestamp {
+                display: none;
+            }
+
+            .record-info {
+                gap: 8px;
+            }
+
+            .record-item {
+                padding: 10px;
+            }
+
+            .delete-btn {
+                padding: 6px 12px;
+                font-size: 0.8em;
+            }
         }
 
         .record-diff.perfect {
@@ -420,7 +446,7 @@
                         <div class="record-info">
                             <span class="record-time">${record.time.toFixed(2)}s</span>
                             <span class="record-diff ${diffClass}">${diffText}</span>
-                            <span style="color: #9ca3af; font-size: 0.85em;">${record.timestamp}</span>
+                            <span class="record-timestamp">${record.timestamp}</span>
                         </div>
                         <button class="delete-btn" onclick="deleteRecord(${record.id})">刪除</button>
                     </div>
