@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>5.20 秒挑戰遊戲</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+            width: 100%;
+        }
+
+        h1 {
+            text-align: center;
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 2em;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 0.9em;
+        }
+
+        .timer-display {
+            text-align: center;
+            font-size: 4em;
+            font-weight: bold;
+            color: #333;
+            margin: 30px 0;
+            font-family: 'Courier New', monospace;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .timer-display.perfect {
+            color: #10b981;
+            animation: pulse 0.5s ease-in-out;
+        }
+
+        .timer-display.close {
+            color: #f59e0b;
+        }
+
+        .timer-display.far {
+            color: #ef4444;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        button {
+            padding: 60px 80px;
+            font-size: 2.2em;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .toggle-btn {
+            background: #10b981;
+            color: white;
+            min-width: 200px;
+        }
+
+        .toggle-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .toggle-btn.running {
+            background: #ef4444;
+        }
+
+        .toggle-btn:hover:not(.running) {
+            background: #059669;
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.4);
+        }
+
+        .toggle-btn.running:hover {
+            background: #dc2626;
+            box-shadow: 0 5px 15px rgba(239, 68, 68, 0.4);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .records-section {
+            margin-top: 30px;
+        }
+
+        .records-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .records-header h2 {
+            color: #333;
+            font-size: 1.3em;
+        }
+
+        .clear-all-btn {
+            padding: 8px 20px;
+            font-size: 0.9em;
+            background: #6b7280;
+            color: white;
+        }
+
+        .clear-all-btn:hover:not(:disabled) {
+            background: #4b5563;
+            transform: translateY(-2px);
+            box-shadow: 0 3px 10px rgba(107, 114, 128, 0.4);
+        }
+
+        .records-list {
+            max-height: 300px;
+            overflow-y: auto;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 10px;
+        }
+
+        .record-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 15px;
+            margin-bottom: 8px;
+            background: #f9fafb;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .record-item:hover {
+            background: #f3f4f6;
+            transform: translateX(5px);
+        }
+
+        .record-info {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex: 1;
+        }
+
+        .record-time {
+            font-weight: bold;
+            font-size: 1.1em;
+            font-family: 'Courier New', monospace;
+            min-width: 80px;
+        }
+
+        .record-diff {
+            font-size: 0.95em;
+            padding: 4px 10px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        .record-diff.perfect {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .record-diff.far {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .record-diff.close {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .delete-btn {
+            padding: 6px 15px;
+            font-size: 0.85em;
+            background: #ef4444;
+            color: white;
+        }
+
+        .delete-btn:hover {
+            background: #dc2626;
+            transform: scale(1.05);
+        }
+
+        .no-records {
+            text-align: center;
+            color: #9ca3af;
+            padding: 30px;
+            font-style: italic;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+            padding: 15px;
+            background: #f9fafb;
+            border-radius: 10px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-label {
+            font-size: 0.85em;
+            color: #6b7280;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #667eea;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>⏱️ 5.20 秒挑戰</h1>
+        <p class="subtitle">挑戰你的反應！讓計時器剛好停在 5.20 秒</p>
+        
+        <div class="timer-display" id="timerDisplay">0.00</div>
+
+        <div class="controls">
+            <button class="toggle-btn" id="toggleBtn" onclick="toggleTimer()">開始</button>
+        </div>
+
+        <div class="records-section">
+            <div class="records-header">
+                <h2>📊 遊戲記錄</h2>
+                <button class="clear-all-btn" id="clearAllBtn" onclick="clearAllRecords()">清除所有記錄</button>
+            </div>
+            
+            <div class="stats" id="stats">
+                <div class="stat-item">
+                    <div class="stat-label">總次數</div>
+                    <div class="stat-value" id="totalGames">0</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">完美次數</div>
+                    <div class="stat-value" id="perfectGames">0</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">最佳成績</div>
+                    <div class="stat-value" id="bestScore">--</div>
+                </div>
+            </div>
+
+            <div class="records-list" id="recordsList">
+                <div class="no-records">還沒有記錄，開始挑戰吧！</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let startTime = 0;
+        let timerInterval = null;
+        let isRunning = false;
+        let records = [];
+
+        // 載入記錄
+        function loadRecords() {
+            const saved = localStorage.getItem('timingGameRecords');
+            if (saved) {
+                records = JSON.parse(saved);
+                renderRecords();
+            }
+        }
+
+        // 儲存記錄
+        function saveRecords() {
+            localStorage.setItem('timingGameRecords', JSON.stringify(records));
+        }
+
+        // 切換計時器
+        function toggleTimer() {
+            if (!isRunning) {
+                startTimer();
+            } else {
+                stopTimer();
+            }
+        }
+
+        // 開始計時
+        function startTimer() {
+            startTime = Date.now();
+            isRunning = true;
+
+            const toggleBtn = document.getElementById('toggleBtn');
+            toggleBtn.textContent = '停止';
+            toggleBtn.classList.add('running');
+            document.getElementById('timerDisplay').className = 'timer-display';
+
+            timerInterval = setInterval(() => {
+                const elapsed = (Date.now() - startTime) / 1000;
+                document.getElementById('timerDisplay').textContent = elapsed.toFixed(2);
+            }, 10);
+        }
+
+        // 停止計時
+        function stopTimer() {
+            if (!isRunning) return;
+
+            // 先計算最終時間（使用當前顯示的時間）
+            const finalTime = parseFloat(((Date.now() - startTime) / 1000).toFixed(2));
+            const diff = finalTime - 5.20;
+
+            // 停止計時器
+            clearInterval(timerInterval);
+            isRunning = false;
+
+            // 更新顯示為最終時間
+            const display = document.getElementById('timerDisplay');
+            display.textContent = finalTime.toFixed(2);
+
+            const toggleBtn = document.getElementById('toggleBtn');
+            toggleBtn.textContent = '開始';
+            toggleBtn.classList.remove('running');
+
+            // 添加視覺反饋
+            if (diff === 0) {
+                display.className = 'timer-display perfect';
+            } else if (Math.abs(diff) <= 0.1) {
+                display.className = 'timer-display close';
+            } else {
+                display.className = 'timer-display far';
+            }
+
+            // 記錄成績
+            addRecord(finalTime, diff);
+        }
+
+        // 添加記錄
+        function addRecord(time, diff) {
+            const record = {
+                id: Date.now(),
+                time: time,
+                diff: diff,
+                timestamp: new Date().toLocaleString('zh-TW')
+            };
+            
+            records.unshift(record);
+            saveRecords();
+            renderRecords();
+        }
+
+        // 渲染記錄
+        function renderRecords() {
+            const recordsList = document.getElementById('recordsList');
+            
+            if (records.length === 0) {
+                recordsList.innerHTML = '<div class="no-records">還沒有記錄，開始挑戰吧！</div>';
+                updateStats();
+                return;
+            }
+            
+            recordsList.innerHTML = records.map(record => {
+                let diffClass = 'positive';
+                let diffText = '';
+                
+                if (record.diff === 0) {
+                    diffClass = 'perfect';
+                    diffText = 'Perfect! 🎉';
+                } else {
+                    if (Math.abs(record.diff) <= 0.1) {
+                        diffClass = 'close';
+                    } else {
+                        diffClass = 'far';
+                    }
+                    if (record.diff > 0) {
+                        diffText = `+${record.diff.toFixed(2)}`;
+                    } else {
+                        diffText = `${record.diff.toFixed(2)}`;
+                    }
+                }
+                
+                return `
+                    <div class="record-item">
+                        <div class="record-info">
+                            <span class="record-time">${record.time.toFixed(2)}s</span>
+                            <span class="record-diff ${diffClass}">${diffText}</span>
+                            <span style="color: #9ca3af; font-size: 0.85em;">${record.timestamp}</span>
+                        </div>
+                        <button class="delete-btn" onclick="deleteRecord(${record.id})">刪除</button>
+                    </div>
+                `;
+            }).join('');
+            
+            updateStats();
+        }
+
+        // 更新統計
+        function updateStats() {
+            const totalGames = records.length;
+            const perfectGames = records.filter(r => r.diff === 0).length;
+            
+            let bestScore = '--';
+            if (records.length > 0) {
+                const closest = records.reduce((best, current) => 
+                    Math.abs(current.diff) < Math.abs(best.diff) ? current : best
+                );
+                bestScore = closest.time.toFixed(2) + 's';
+            }
+            
+            document.getElementById('totalGames').textContent = totalGames;
+            document.getElementById('perfectGames').textContent = perfectGames;
+            document.getElementById('bestScore').textContent = bestScore;
+        }
+
+        // 刪除單筆記錄
+        function deleteRecord(id) {
+            records = records.filter(record => record.id !== id);
+            saveRecords();
+            renderRecords();
+        }
+
+        // 清除所有記錄
+        function clearAllRecords() {
+            if (records.length === 0) return;
+            
+            if (confirm('確定要清除所有記錄嗎？')) {
+                records = [];
+                saveRecords();
+                renderRecords();
+            }
+        }
+
+        // 初始化
+        loadRecords();
+    </script>
+</body>
+</html>
