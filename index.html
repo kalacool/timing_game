@@ -167,6 +167,7 @@
             background: #f9fafb;
             border-radius: 8px;
             transition: all 0.2s ease;
+            gap: 10px;
         }
 
         .record-item:hover {
@@ -174,43 +175,46 @@
             transform: translateX(5px);
         }
 
-        .record-info {
-            display: flex;
-            gap: 15px;
-            align-items: center;
+        .record-number {
+            font-weight: bold;
+            color: #667eea;
+            font-size: 1em;
+            min-width: 25px;
+        }
+
+        .record-content {
             flex: 1;
-            flex-wrap: wrap;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .record-main {
+            display: flex;
+            gap: 10px;
+            align-items: center;
         }
 
         .record-time {
             font-weight: bold;
             font-size: 1.1em;
             font-family: 'Courier New', monospace;
-            min-width: 80px;
         }
 
         .record-diff {
-            font-size: 0.95em;
-            padding: 4px 10px;
+            font-size: 0.9em;
+            padding: 3px 8px;
             border-radius: 5px;
             font-weight: bold;
         }
 
         .record-timestamp {
             color: #9ca3af;
-            font-size: 0.85em;
+            font-size: 0.8em;
         }
 
         /* 手機版樣式 */
         @media (max-width: 768px) {
-            .record-timestamp {
-                display: none;
-            }
-
-            .record-info {
-                gap: 8px;
-            }
-
             .record-item {
                 padding: 10px;
             }
@@ -421,10 +425,10 @@
                 return;
             }
             
-            recordsList.innerHTML = records.map(record => {
+            recordsList.innerHTML = records.map((record, index) => {
                 let diffClass = 'positive';
                 let diffText = '';
-                
+
                 if (record.diff === 0) {
                     diffClass = 'perfect';
                     diffText = 'Perfect! 🎉';
@@ -440,13 +444,16 @@
                         diffText = `${record.diff.toFixed(2)}`;
                     }
                 }
-                
+
                 return `
                     <div class="record-item">
-                        <div class="record-info">
-                            <span class="record-time">${record.time.toFixed(2)}s</span>
-                            <span class="record-diff ${diffClass}">${diffText}</span>
-                            <span class="record-timestamp">${record.timestamp}</span>
+                        <span class="record-number">#${index + 1}</span>
+                        <div class="record-content">
+                            <div class="record-main">
+                                <span class="record-time">${record.time.toFixed(2)}s</span>
+                                <span class="record-diff ${diffClass}">${diffText}</span>
+                            </div>
+                            <div class="record-timestamp">${record.timestamp}</div>
                         </div>
                         <button class="delete-btn" onclick="deleteRecord(${record.id})">刪除</button>
                     </div>
