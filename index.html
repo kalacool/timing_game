@@ -238,7 +238,7 @@
             font-weight: bold;
         }
 
-        .record-timestamp {
+        .record-target {
             color: #9ca3af;
             font-size: 0.8em;
         }
@@ -327,13 +327,12 @@
 </head>
 <body>
     <div class="container">
-        <h1>⏱️ 計時挑戰遊戲</h1>
-        <p class="subtitle">挑戰你的反應！讓計時器剛好停在目標時間</p>
+        <h1>我愛你 💒 一生一世</h1>
+        <p class="subtitle">用你的真心，停在最完美的時刻</p>
 
         <div class="mode-selector">
             <button class="mode-btn active" onclick="setMode(5.20)">5.20 秒</button>
             <button class="mode-btn" onclick="setMode(13.14)">13.14 秒</button>
-            <button class="mode-btn" onclick="setMode(6.66)">6.66 秒</button>
         </div>
 
         <div class="timer-display" id="timerDisplay">0.00</div>
@@ -475,8 +474,7 @@
                 id: Date.now(),
                 time: time,
                 diff: diff,
-                target: targetTime,
-                timestamp: new Date().toLocaleString('zh-TW')
+                target: targetTime
             };
 
             records.unshift(record);
@@ -514,7 +512,7 @@
                     }
                 }
 
-                const targetDisplay = record.target ? ` (目標: ${record.target.toFixed(2)}s)` : '';
+                const targetDisplay = record.target ? `目標: ${record.target.toFixed(2)}s` : '';
 
                 return `
                     <div class="record-item">
@@ -524,7 +522,7 @@
                                 <span class="record-time">${record.time.toFixed(2)}s</span>
                                 <span class="record-diff ${diffClass}">${diffText}</span>
                             </div>
-                            <div class="record-timestamp">${record.timestamp}${targetDisplay}</div>
+                            <div class="record-target">${targetDisplay}</div>
                         </div>
                         <button class="delete-btn" onclick="deleteRecord(${record.id})">刪除</button>
                     </div>
