@@ -24,7 +24,7 @@
         .container {
             background: white;
             border-radius: 20px;
-            padding: 30px;
+            padding: 20px;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             max-width: 600px;
             width: 100%;
@@ -42,6 +42,55 @@
             color: #666;
             margin-bottom: 20px;
             font-size: 0.9em;
+        }
+
+        .player-info {
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: linear-gradient(135deg, #f9f7f4 0%, #f5f1e8 100%);
+            border-radius: 10px;
+            border: 1px solid #e8dcc8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .player-label {
+            color: #8b7355;
+            font-weight: 500;
+            font-size: 1em;
+        }
+
+        .player-name {
+            color: #d4a574;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        .change-player-btn {
+            padding: 8px 20px;
+            font-size: 0.9em;
+            border: 1.5px solid #d4a574;
+            background: white;
+            color: #d4a574;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .change-player-btn:hover:not(:disabled) {
+            background: #d4a574;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .change-player-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
 
         .mode-selector {
@@ -190,14 +239,13 @@
 
         .record-item {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            flex-direction: column;
             padding: 12px 15px;
             margin-bottom: 8px;
             background: #f9fafb;
             border-radius: 8px;
             transition: all 0.2s ease;
-            gap: 10px;
+            gap: 8px;
         }
 
         .record-item:hover {
@@ -205,11 +253,18 @@
             transform: translateX(5px);
         }
 
-        .record-number {
+        .record-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .record-nickname {
             font-weight: bold;
             color: #e6ca9a;
             font-size: 1em;
-            min-width: 25px;
+            flex-shrink: 0;
         }
 
         .record-content {
@@ -217,12 +272,21 @@
             display: flex;
             flex-direction: column;
             gap: 5px;
+            min-width: 0;
         }
 
         .record-main {
             display: flex;
             gap: 10px;
             align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .record-bottom {
+            display: flex;
+            justify-content: flex-end;
+            padding-top: 5px;
+            border-top: 1px solid #e5e7eb;
         }
 
         .record-time {
@@ -330,6 +394,12 @@
         <h1>我愛你 💒 一生一世</h1>
         <p class="subtitle">用你的真心，停在最完美的時刻</p>
 
+        <div class="player-info">
+            <span class="player-label">目前玩家:</span>
+            <span class="player-name" id="currentPlayer">點擊換人開始</span>
+            <button class="change-player-btn" onclick="changePlayer()">換人</button>
+        </div>
+
         <div class="mode-selector">
             <button class="mode-btn active" onclick="setMode(5.20)">5.20 秒</button>
             <button class="mode-btn" onclick="setMode(13.14)">13.14 秒</button>
@@ -378,6 +448,76 @@
         let isRunning = false;
         let records = [];
         let targetTime = 5.20; // 預設目標時間
+        let currentPlayer = ''; // 當前玩家
+
+        // 隨機暱稱列表
+        const nicknames = [
+            // 經典動漫
+            '維尼🐻', '悟空🐵',
+            '鳴人🍥', '艾連⚔️', '提摩🍄',
+            '哆啦A夢🔵', '大雄👓', '靜香🎀', '胖虎🎤', '小夫💰',
+            '三井壽🏀', '柯南🔍', '小蘭🥋', '灰原💊',
+            '小新🖍️', '妮妮🎀', '阿呆🐶', '正男😢', '風間👔',
+            '海綿寶寶🧽', '派大星⭐', '章魚哥🐙', '蟹老闆🦀',
+            '龍貓🌳', '波妞🐟', '霍爾🔥', '琪琪🧹',
+            '小丸子👧', '小玉🐱', '花輪💰', '永澤🔥', '大野⚾',
+
+            // 寶可夢
+            '皮卡丘⚡', '小智🧢', '小霞💧', '小剛🪨', '火箭隊🚀',
+            '傑尼龜🐢', '小火龍🔥', '妙蛙種子🌱', '卡比獸😴',
+
+            // 迪士尼
+            '唐老鴨🦆', '米奇🐭', '米妮🎀', '高飛🐶', '布魯托🐕',
+            '胡迪🤠', '巴斯光年🚀', '尼莫🐠', '多莉🐟', '泰山🦍',
+
+            // 經典卡通
+            '史努比🐕', '加菲貓🐱', '湯姆🐱', '傑利🐭',
+
+            // 網路迷因/實況主
+            '杰哥😎', '阿偉😱', '彬彬🎮', '睏寶😴', '統神🎤',
+            '尼克星⭐', '姜哥🔥', '韓總💼', '孔劉🎬',
+
+            // JOJO系列
+            '喬魯諾🐞', '迪奧⏰', '承太郎⭐', '徐倫🦋', '喬瑟夫🎸',
+
+            // 格鬥/運動
+            '泰森🥊', '刃牙💪', '勇次郎👹', '阿里🥊',
+
+            // 獵人
+            '小傑🎣', '奇犽⚡', '酷拉皮卡⛓️', '雷歐力💼', '西索🃏',
+
+            // 科學家/歷史人物
+            '愛因斯坦🧠', '奧本海默💣', '牛頓🍎', '特斯拉⚡', '達文西🎨',
+
+            // 克蘇魯神話
+            '克蘇魯🐙',
+
+            // 其他動漫
+            '柔美💕', '小雄🎮', '信長⚔️', '威可那🌟',
+            '炭治郎🔥', '禰豆子🎋', '善逸⚡', '伊之助🐗',
+            '夜神月📓', '彌海砂💕',
+            '艾斯🔥', '索隆⚔️', '香吉士🚬', '娜美🍊', '喬巴🦌',
+            '佐助⚡', '小櫻🌸', '卡卡西👁️', '自來也🐸',
+            '傑諾斯🤖', '吹雪❄️', '龍卷🌪️',
+            '炎柱🔥', '水柱🌊', '蟲柱🦋', '音柱🎵'
+        ];
+
+        // 獲取隨機暱稱
+        function getRandomNickname() {
+            return nicknames[Math.floor(Math.random() * nicknames.length)];
+        }
+
+        // 換人
+        function changePlayer() {
+            if (isRunning) return; // 遊戲進行中不能換人
+            currentPlayer = getRandomNickname();
+            updatePlayerDisplay();
+        }
+
+        // 更新玩家顯示
+        function updatePlayerDisplay() {
+            document.getElementById('currentPlayer').textContent = currentPlayer;
+        }
 
         // 設定挑戰模式
         function setMode(time) {
@@ -474,7 +614,8 @@
                 id: Date.now(),
                 time: time,
                 diff: diff,
-                target: targetTime
+                target: targetTime,
+                nickname: currentPlayer || '匿名'
             };
 
             records.unshift(record);
@@ -498,7 +639,7 @@
 
                 if (record.diff === 0) {
                     diffClass = 'perfect';
-                    diffText = 'Perfect! 🎉';
+                    diffText = '完美！🎉';
                 } else {
                     if (Math.abs(record.diff) <= 0.1) {
                         diffClass = 'close';
@@ -513,18 +654,23 @@
                 }
 
                 const targetDisplay = record.target ? `目標: ${record.target.toFixed(2)}s` : '';
+                const nickname = record.nickname || '匿名';
 
                 return `
                     <div class="record-item">
-                        <span class="record-number">#${index + 1}</span>
-                        <div class="record-content">
-                            <div class="record-main">
-                                <span class="record-time">${record.time.toFixed(2)}s</span>
-                                <span class="record-diff ${diffClass}">${diffText}</span>
+                        <div class="record-top">
+                            <span class="record-nickname">${nickname}</span>
+                            <div class="record-content">
+                                <div class="record-main">
+                                    <span class="record-time">${record.time.toFixed(2)}s</span>
+                                    <span class="record-diff ${diffClass}">${diffText}</span>
+                                </div>
+                                <div class="record-target">${targetDisplay}</div>
                             </div>
-                            <div class="record-target">${targetDisplay}</div>
                         </div>
-                        <button class="delete-btn" onclick="deleteRecord(${record.id})">刪除</button>
+                        <div class="record-bottom">
+                            <button class="delete-btn" onclick="deleteRecord(${record.id})">刪除</button>
+                        </div>
                     </div>
                 `;
             }).join('');
@@ -570,6 +716,7 @@
 
         // 初始化
         loadRecords();
+        changePlayer(); // 初始化時隨機一個玩家
     </script>
 </body>
 </html>
