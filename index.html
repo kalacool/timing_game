@@ -241,51 +241,45 @@
             display: flex;
             flex-direction: column;
             padding: 12px 15px;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
             background: #f9fafb;
-            border-radius: 8px;
+            border-radius: 10px;
             transition: all 0.2s ease;
             gap: 8px;
         }
 
         .record-item:hover {
             background: #f3f4f6;
-            transform: translateX(5px);
+            transform: translateX(3px);
         }
 
         .record-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
             gap: 10px;
+            align-items: center;
+            text-align: center;
         }
 
         .record-nickname {
             font-weight: bold;
             color: #e6ca9a;
             font-size: 1em;
-            flex-shrink: 0;
+            text-align: center;
         }
 
         .record-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-            min-width: 0;
+            display: contents;
         }
 
         .record-main {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-            flex-wrap: wrap;
+            display: contents;
         }
 
         .record-bottom {
             display: flex;
-            justify-content: flex-end;
-            padding-top: 5px;
+            justify-content: center;
+            padding-top: 8px;
             border-top: 1px solid #e5e7eb;
         }
 
@@ -293,6 +287,7 @@
             font-weight: bold;
             font-size: 1.1em;
             font-family: 'Courier New', monospace;
+            text-align: center;
         }
 
         .record-diff {
@@ -300,11 +295,13 @@
             padding: 3px 8px;
             border-radius: 5px;
             font-weight: bold;
+            text-align: center;
         }
 
         .record-target {
             color: #9ca3af;
-            font-size: 0.8em;
+            font-size: 0.85em;
+            text-align: center;
         }
 
         /* 手機版樣式 */
@@ -660,13 +657,9 @@
                     <div class="record-item">
                         <div class="record-top">
                             <span class="record-nickname">${nickname}</span>
-                            <div class="record-content">
-                                <div class="record-main">
-                                    <span class="record-time">${record.time.toFixed(2)}s</span>
-                                    <span class="record-diff ${diffClass}">${diffText}</span>
-                                </div>
-                                <div class="record-target">${targetDisplay}</div>
-                            </div>
+                            <span class="record-time">${record.time.toFixed(2)}s</span>
+                            <span class="record-diff ${diffClass}">${diffText}</span>
+                            <span class="record-target">${targetDisplay}</span>
                         </div>
                         <div class="record-bottom">
                             <button class="delete-btn" onclick="deleteRecord(${record.id})">刪除</button>
