@@ -45,6 +45,7 @@
         }
 
         .player-info {
+            text-align: center;
             margin-bottom: 20px;
             padding: 15px;
             background: linear-gradient(135deg, #f9f7f4 0%, #f5f1e8 100%);
@@ -53,29 +54,14 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 20px;
+            gap: 15px;
             flex-wrap: wrap;
-        }
-
-        .player-text-group {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-            align-items: flex-start;
         }
 
         .player-label {
             color: #8b7355;
             font-weight: 500;
-            font-size: 0.9em;
-        }
-
-        .player-row {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 15px;
-            flex-wrap: wrap;
+            font-size: 1em;
         }
 
         .player-name {
@@ -85,7 +71,7 @@
         }
 
         .change-player-btn {
-            padding: 8px 20px;
+            padding: 8px 10px;
             font-size: 0.9em;
             border: 1.5px solid #d4a574;
             background: white;
@@ -409,10 +395,8 @@
         <p class="subtitle">用你的真心，停在最完美的時刻</p>
 
         <div class="player-info">
-            <div class="player-text-group">
-                <div class="player-label">目前玩家</div>
-                <span class="player-name" id="currentPlayer">點擊換人開始</span>
-            </div>
+            <span class="player-label">玩家:</span>
+            <span class="player-name" id="currentPlayer">點擊換人開始</span>
             <button class="change-player-btn" onclick="changePlayer()">換人</button>
         </div>
 
